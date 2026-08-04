@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#FAFAF8"/>
+  <g stroke="#D9DCDB" stroke-width="1">
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="0" y1="500" x2="800" y2="500"/>
+    <line x1="100" y1="0" x2="100" y2="600"/>
+    <line x1="200" y1="0" x2="200" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/>
+    <line x1="400" y1="0" x2="400" y2="600"/>
+    <line x1="500" y1="0" x2="500" y2="600"/>
+    <line x1="600" y1="0" x2="600" y2="600"/>
+    <line x1="700" y1="0" x2="700" y2="600"/>
+  </g>
+  <line x1="400" y1="500" x2="400" y2="80" stroke="#1B1E20" stroke-width="3"/>
+  <path d="M 400 90 L 620 470 L 400 470 Z" fill="none" stroke="#1B4B66" stroke-width="3"/>
+  <path d="M 400 150 L 280 470 L 400 470 Z" fill="none" stroke="#B8935A" stroke-width="3"/>
+  <path d="M 250 500 Q 400 540 620 500 L 600 470 L 280 470 Z" fill="none" stroke="#1B1E20" stroke-width="3"/>
+  <text x="40" y="560" font-family="monospace" font-size="16" fill="#6B7275">JUNK RIG — SAIL PLAN — SAMPLE</text>
+</svg>
