@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --ink:#1B1E20;
+    --line:#D9DCDB;
+    --marine:#1B4B66;
+    --brass:#B8935A;
+    --muted:#6B7275;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:48px 32px 28px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:28px;
+    letter-spacing:-0.02em;
+  }
+  .brand span{color:var(--marine);}
+  .tagline{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- GRID ---------- */
+  main{
+    max-width:1400px;
+    margin:0 auto;
+    padding:40px 32px 100px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:36px 28px;
+  }
+
+  .plate{
+    position:relative;
+  }
+  .frame{
+    position:relative;
+    aspect-ratio:4/3;
+    border:1px solid var(--line);
+    background:#fff;
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .5s cubic-bezier(.2,.7,.2,1);
+  }
+  .frame:hover img{transform:scale(1.04);}
+
+  /* corner ticks - drafting-sheet signature */
+  .tick{
+    position:absolute;
+    width:10px;
+    height:10px;
+    pointer-events:none;
+  }
+  .tick::before,.tick::after{
+    content:"";
+    position:absolute;
+    background:var(--ink);
+  }
+  .tick.tl{top:-1px;left:-1px;}
+  .tick.tr{top:-1px;right:-1px;}
+  .tick.bl{bottom:-1px;left:-1px;}
+  .tick.br{bottom:-1px;right:-1px;}
+  .tick::before{width:10px;height:1.5px;top:0;}
+  .tick::after{width:1.5px;height:10px;left:0;}
+  .tick.tr::before{right:0;}
+  .tick.tr::after{right:0;left:auto;}
+  .tick.bl::before{bottom:0;top:auto;}
+  .tick.br::before{bottom:0;top:auto;right:0;}
+  .tick.br::after{right:0;left:auto;}
+
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(27,30,32,0.72);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .frame:hover .overlay{opacity:1;}
+  .overlay button, .overlay a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    background:var(--paper);
+    color:var(--ink);
+    border:none;
+    padding:9px 14px;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .overlay button:hover, .overlay a:hover{background:var(--brass);color:#fff;}
+
+  .label{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+  }
+  .title{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:500;
+    font-size:15px;
+  }
+  .meta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+
+  .empty{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--muted);
+    padding:80px 0;
+    text-align:center;
+  }
+
+  /* ---------- LIGHTBOX ---------- */
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(27,30,32,0.94);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:100;
+    padding:40px 20px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{
+    max-width:100%;
+    max-height:74vh;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .lightbox-bar{
+    margin-top:20px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    font-family:'IBM Plex Mono',monospace;
+    color:#fff;
+    font-size:12px;
+    letter-spacing:0.05em;
+  }
+  .lightbox-bar a, .lightbox-bar button{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.4);
+    color:#fff;
+    padding:9px 16px;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .lightbox-bar a:hover, .lightbox-bar button:hover{background:var(--brass);border-color:var(--brass);}
+  .close{
+    position:absolute;
+    top:28px;
+    right:32px;
+    background:none;
+    border:none;
+    color:#fff;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.05em;
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:24px 32px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  @media (max-width:520px){
+    header{padding:32px 20px 22px;}
+    main{padding:28px 20px 80px;}
+    .brand{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">CLAYTON<span>·</span>WORKS</div>
+    <div class="tagline">Downloadable images &amp; project archive</div>
+  </div>
+  <div class="count" id="count"></div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none;">No images yet — add entries to the IMAGES list in index.html</div>
+</main>
+
+<footer>San Pedro, CA — updated via GitHub</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="close" id="closeBtn">Close ✕</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-bar">
+    <span id="lightboxTitle"></span>
+    <a id="downloadLink" download>Download full size</a>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     Images are listed automatically in images/manifest.json,
+     which a GitHub Action regenerates every time you add or
+     remove a file in images/. Nothing to edit here.
+     ============================================================ */
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  const count = document.getElementById('count');
+
+  let IMAGES = [];
+
+  function render(){
+    if (IMAGES.length === 0){
+      empty.style.display = 'block';
+      count.textContent = '';
+      return;
+    }
+    empty.style.display = 'none';
+    count.textContent = String(IMAGES.length).padStart(2,'0') + ' IMAGES';
+
+    IMAGES.forEach((item, i) => {
+      const plate = document.createElement('div');
+      plate.className = 'plate';
+      plate.innerHTML = `
+        <div class="frame" data-index="${i}">
+          <img src="${item.src}" alt="${item.title}" loading="lazy">
+          <span class="tick tl"></span><span class="tick tr"></span>
+          <span class="tick bl"></span><span class="tick br"></span>
+          <div class="overlay">
+            <button class="view-btn">View</button>
+            <a href="${item.src}" download>Download</a>
+          </div>
+        </div>
+        <div class="label">
+          <div class="title">${item.title}</div>
+          <div class="meta">${item.tag}</div>
+        </div>
+      `;
+      grid.appendChild(plate);
+    });
+  }
+
+  fetch('images/manifest.json', { cache: 'no-store' })
+    .then(res => {
+      if (!res.ok) throw new Error('manifest not found');
+      return res.json();
+    })
+    .then(data => { IMAGES = data; render(); })
+    .catch(() => {
+      empty.textContent = "Couldn't load images/manifest.json — this page needs to be served (GitHub Pages or a local server), not opened directly as a file.";
+      empty.style.display = 'block';
+    });
+
+  // Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const downloadLink = document.getElementById('downloadLink');
+
+  function openLightbox(index){
+    const item = IMAGES[index];
+    lightboxImg.src = item.src;
+    lightboxTitle.textContent = item.title;
+    downloadLink.href = item.src;
+    lightbox.classList.add('open');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+  }
+
+  grid.addEventListener('click', (e) => {
+    const frame = e.target.closest('.frame');
+    if (!frame) return;
+    if (e.target.tagName === 'A') return; // let download link behave normally
+    openLightbox(Number(frame.dataset.index));
+  });
+
+  document.getElementById('closeBtn').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>
